@@ -64,10 +64,7 @@
 
   TcpConnection.prototype._onError = function(info) {
     var code = info.resultCode;
-    if (chrome.runtime.lastError)
-      error("Error code (" + code + "): " + chrome.runtime.lastError.message);
-    else
-      error("Error code (" + code + ")");
+    console.warn("Error code (" + code + "): " + NetErrorCode[code]);
     this.emitEvent('error', [code]);
     this.disconnect();
   }

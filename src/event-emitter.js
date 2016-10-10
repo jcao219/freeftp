@@ -277,14 +277,14 @@ proto.removeListeners = function removeListeners(evt, listeners) {
 */
 proto.manipulateListeners = function manipulateListeners(remove, evt, listeners) {
   var i;
-  var value;
   var single = remove ? this.removeListener : this.addListener;
   var multiple = remove ? this.removeListeners : this.addListeners;
 
   // If evt is an object then pass each of its properties to this method
   if (typeof evt === 'object' && !(evt instanceof RegExp)) {
     for (i in evt) {
-      if (evt.hasOwnProperty(i) && (value = evt[i])) {
+      if (evt.hasOwnProperty(i) && evt[i]) {
+        var value = evt[i];
         // Pass the single listener straight through to the singular method
         if (typeof value === 'function') {
           single.call(this, i, value);

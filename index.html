@@ -7,13 +7,13 @@
 </head>
 <body>
   <section id="server">
-  <h1>Free FTP</h1>
-  <div class="hide-when-connected">Serve at 
+  <div class="hide-when-connected">Connect to 
 	<input id="addresses"></input>
-    <input type="number" id="serverPort" value="21"></input>
+    : <input type="number" id="serverPort" value="21"></input>
     <button id="serverStart">Start!</button>
   </div>
   <div class="hide-when-not-connected">
+    <div id="pwd"></div>
     <table>
       <thead>
         <tr class="header" id="theader">
@@ -27,6 +27,10 @@
     </table>
   </div>
   </section>
+  <script src="heir.js"></script>
+  <script src="event-emitter.js"></script>
+  <script src="tcp-connection.js"></script>
+  <script src="ftp-client.js"></script>
   <script src="server.js"></script>
 </body>
 </html>

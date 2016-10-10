@@ -1,4 +1,3 @@
-var ftpClient;
 var commandWindow;
 
 /**
@@ -19,17 +18,3 @@ chrome.app.runtime.onLaunched.addListener(function() {
 	}
 });
 
-function startServer(addr, port) {
-  if (ftpClient) {
-    ftpClient.disconnect();
-  }
-  ftpClient = new FtpClient(addr, port, null, null);
-}
-
-
-function stopServer() {
-  if (ftpClient) {
-    ftpClient.disconnect();
-    ftpClient=null;
-  }
-}

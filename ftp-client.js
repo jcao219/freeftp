@@ -1,6 +1,5 @@
 (function(exports) {
-
-  var tcp = chrome.sockets.tcp;
+  "use strict";
 
   function FtpClient(addr, port, user, pass) {
     this.addr = addr;
@@ -8,97 +7,41 @@
     this.user = user;
     this.pass = pass;
 
-    this.commander = new TcpConnection(addr, port);
-    this.commander.on("recv", function(str) {
-      log(str);
-    });
+    this._onReceive = this._onReceive.bind(this);
+
+    this.commander = new TcpConnection(addr, port, true);
+    this.commander.on("recv", this._onReceive);
     this.commander.connect();
   }
 
   Heir.inherit(FtpClient, EventEmitter);
 
-  function TcpConnection(addr, port) {
-    this.addr = addr;
-    this.port = port;
-    this.connected = false;
-    this.socketId = null;
-    this._onReceive = this._onReceive.bind(this);
-    this._onError = this._onError.bind(this);
-  }
-
-  Heir.inherit(TcpConnection, EventEmitter);
-
-  TcpConnection.prototype.connect = function() {
-    var that = this;
-    tcp.create({}, function(info) {
-      that.socketId = info.socketId;
-      tcp.onReceive.addListener(that._onReceive);
-      tcp.onReceiveError.addListener(that._onError);
-      tcp.connect(that.socketId, that.addr, that.port, function(code) {
-        if (code < 0) {
-          that._onError(null, code);
-        } else {
-          that.connected = true;
-          that.emitEvent('connected');
-        }
-      });
-    });
-
-    log('Connecting to server.');
-  }
-
-  TcpConnection.prototype.send = function(str) {
-    stringToArrayBuffer(str, function(buf) {
-      tcp.send(this.socketId, buf, function(sendInfo) {
-        if(sendInfo.resultCode < 0)
-          this._onError(null, sendInfo.resultCode);
-      }.bind(this));
-    }.bind(this));
+  FtpClient.prototype._onReceive = function(str) {
+    var splitted = str.split(' ');
+    switch(splitted[0]) {
+      case "220": // Ready for login
+        this.commander.sendln("USER " + this.user);
+        break;
+      case "331": // Need password
+        this.commander.sendln("PASS " + this.user);
+        break;
+      case "230": // Logged in
+        this.emitEvent("logged in");
+        break;
+      case "257": // Either PWD response or MKD(ir) response
+        var pwd = splitted[1];
+        pwd = pwd.substring(1, pwd.length - 1);
+        pwd = pwd.replace(/""/g, '"'); // FTP converts " to ""
+        this.emitEvent("dir result", [pwd]);
+        break;
+      default:
+        log("Unable to handle: " + splitted[0]);
+    }
   };
 
-  TcpConnection.prototype._onReceive = function(receiveInfo) {
-    if (receiveInfo.socketId != this.socketId)
-      return;
-
-    arrayBufferToString(receiveInfo.data, function(str) {
-      this.emitEvent('recv', [str]);
-      log("Recv: " + str);
-    }.bind(this));
+  FtpClient.prototype.getPwd = function() {
+    this.commander.sendln("PWD");
   };
-
-  TcpConnection.prototype._onError = function(info, code) {
-    error("Error code: " + code);
-    this.emitEvent('error', [code]);
-    this.disconnect();
-  }
-
-  TcpConnection.prototype.isConnected=function() {
-    return this.connected;
-  }
-
-  TcpConnection.prototype.disconnect = function() {
-    tcp.onReceive.removeListener(this._onReceive);
-    tcp.onReceiveError.removeListener(this._onError);
-    tcp.close(this.socketId);
-  };
-
-  function stringToArrayBuffer(str, callback) {
-    var bb = new Blob([str]);
-    var f = new FileReader();
-    f.onload = function(e) {
-        callback(e.target.result);
-    };
-    f.readAsArrayBuffer(bb);
-  }
-
-  function arrayBufferToString(buf, callback) {
-    var reader = new FileReader();
-    reader.onload = function(e) {
-      callback(e.target.result);
-    };
-    var blob = new Blob([buf], {type: 'application/octet-stream'});
-    reader.readAsText(blob);
-  }
 
   function log(msg) {
     console.log(msg);

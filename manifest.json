@@ -6,7 +6,7 @@
   "permissions": ["webview", "system.network"],
   "app": {
     "background": {
-      "scripts": ["EventEmitter.js", "heir.js", "ftp-client.js", "main.js"]
+      "scripts": ["main.js"]
     }
   },
   "sockets": {

@@ -7,6 +7,9 @@ import {
 import RaisedButton from 'material-ui/RaisedButton';
 import FlatButton from 'material-ui/FlatButton';
 import Dialog from 'material-ui/Dialog';
+import TextField from 'material-ui/TextField';
+import SelectField from 'material-ui/SelectField';
+import MenuItem from 'material-ui/MenuItem';
 import './ConnectToSite.css';
 
 /**
@@ -15,12 +18,36 @@ import './ConnectToSite.css';
 export default class ConnectToSite extends React.Component {
   state = {
     stepIndex: 0,
+    addr: "",
+    nick: "",
+    nicknameHint: "",
+    port: 21,
+    protocol: "FTP"
   };
 
   handleNext = () => {
     const {stepIndex} = this.state;
     this.setState({
       stepIndex: stepIndex + 1,
+    });
+  };
+
+  handleChangeNick = (event) => {
+    this.setState({
+      nick: event.target.value,
+    });
+  };
+
+  handleChangePort = (event) => {
+    this.setState({
+      port: event.target.value,
+    });
+  };
+
+  handleChangeAddr = (event) => {
+    this.setState({
+      addr: event.target.value,
+      nicknameHint: event.target.value
     });
   };
 
@@ -36,9 +63,19 @@ export default class ConnectToSite extends React.Component {
   getStepContent(stepIndex) {
     switch (stepIndex) {
       case 0:
-        return 'TODO';
+        return (
+          <div>
+          <TextField floatingLabelText="Address" value={this.state.addr} onChange={this.handleChangeAddr} />  
+          <TextField floatingLabelText="Port" value={this.state.port} onChange={this.handleChangePort} />
+          <SelectField style={{width: 150}} value={this.state.protocol}
+            underlineStyle={{'bottom': '6px'}}>
+            <MenuItem value={"FTP"} primaryText="FTP" />
+          </SelectField>
+          </div>
+        );
       case 1:
-        return 'TODO';
+        return <TextField floatingLabelText="Name this connection: " floatingLabelFixed={true}
+          value={this.state.nick} hintText={this.state.nicknameHint} onChange={this.handleChangeNick} />;
       case 2:
         return 'TODO';
       default:
@@ -78,7 +115,7 @@ export default class ConnectToSite extends React.Component {
       <div style={contentStyle}>
         {(
           <div>
-            <p>{this.getStepContent(stepIndex)}</p>
+            {this.getStepContent(stepIndex)}
             <div style={{marginTop: 33, float: 'right'}}>
               <FlatButton
                 label={stepIndex === 0 ? "Cancel" : "Back"}

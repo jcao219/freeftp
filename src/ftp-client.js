@@ -13,9 +13,13 @@ class FtpClient extends EventEmitter {
 
     this.commander = new TcpConnection(addr, port, true);
     this.commander.on("recv", str => this._onReceive(str));
+    this.commander.on("error", str => this._onError(str));
     this.commander.connect();
   }
 
+  _onError(str) {
+    this.emitEvent("tcp error", [str]);
+  }
 
   _onReceive(str) {
     var splitted = str.split(' ');
@@ -28,7 +32,8 @@ class FtpClient extends EventEmitter {
         }
         break;
       case "331": // Need password
-        this.commander.sendln("PASS " + this.user);
+        if(this.pass != null)
+          this.commander.sendln("PASS " + this.user);
         break;
       case "230": // Logged in
         this.emitEvent("logged in");
@@ -52,7 +57,6 @@ class FtpClient extends EventEmitter {
     this.user = user;
     this.pass = pass;
     this.commander.sendln("USER " + this.user);
-    this.commander.sendln("PASS " + this.pass);
   }
 }
 

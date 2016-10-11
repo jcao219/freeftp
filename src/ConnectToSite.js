@@ -14,6 +14,7 @@ import Checkbox from 'material-ui/Checkbox';
 import CircularProgress from 'material-ui/CircularProgress';
 import './ConnectToSite.css';
 import FtpClient from './ftp-client';
+import LoginDialog from './login-dialog';
 
 /**
   * From http://www.material-ui.com/#/components/stepper
@@ -28,7 +29,8 @@ export default class ConnectToSite extends React.Component {
     port: 21,
     establishing: false,
     protocol: "FTP",
-    client: null
+    client: null,
+    needLogin: false
   };
 
   establish() {
@@ -40,7 +42,7 @@ export default class ConnectToSite extends React.Component {
       document.getElementById('pwd').innerHTML = pwd;
     });
 
-    ftpClient.once('login pls', () => this.handleNeedLogin()); // TODO
+    ftpClient.once('login pls', () => this.setState({needLogin: true})); // TODO
     ftpClient.once('logged in', () => this.handleLoginSuccess());
     this.setState({establishing: true, client: ftpClient});
   }
@@ -133,12 +135,20 @@ export default class ConnectToSite extends React.Component {
   };
 
   handleLoginSuccess() {
-    // TODO
+    this.setState({needLogin: false});
   }
 
   handleNeedLogin() {
-    //const {client} = this.state;
-    console.log("Need login!");
+    this.setState({needLogin: true});
+  }
+
+  handleLogin = (user, pass) => {
+    const {client} = this.state;
+    client.login(user, pass);
+  }
+
+  handleLoginCancel = () => {
+    // TODO
   }
 
   render() {
@@ -153,6 +163,7 @@ export default class ConnectToSite extends React.Component {
         modal={true}
         open={this.props.open}
       >
+      <LoginDialog open={this.state.needLogin} onLogin={this.handleLogin} onCancel={this.handleLoginCancel} />
       <div style={{width: '100%', maxWidth: 700, margin: 'auto'}}>
         <Stepper activeStep={stepIndex}>
           <Step>

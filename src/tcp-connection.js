@@ -42,6 +42,7 @@ TcpConnection.prototype.connect = function() {
 }
 
 TcpConnection.prototype.send = function(str) {
+  console.log("Send: " + str);
   stringToArrayBuffer(str, function(buf) {
     tcp.send(this.socketId, buf, function(sendInfo) {
       if(sendInfo.resultCode < 0)
@@ -66,8 +67,9 @@ TcpConnection.prototype._onReceive = function(receiveInfo) {
 
 TcpConnection.prototype._onError = function(info) {
   var code = info.resultCode;
-  console.warn("Error code (" + code + "): " + NetErrorCode[code]);
-  this.emitEvent('error', [code]);
+  const msg = NetErrorCode[code];
+  console.warn("Error code (" + code + "): " + msg);
+  this.emitEvent('error', [msg]);
   this.disconnect();
 }
 

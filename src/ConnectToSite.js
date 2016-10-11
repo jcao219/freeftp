@@ -114,10 +114,10 @@ export default class ConnectToSite extends React.Component {
       case 0:
         return (
           <div>
-          <TextField floatingLabelText="Address" value={this.state.addr} onChange={this.handleChangeAddr} />  
-          <TextField floatingLabelText="Port" value={this.state.port} onChange={this.handleChangePort} />
-          <SelectField style={{width: 150}} value={this.state.protocol}
-            underlineStyle={{'bottom': '6px'}}>
+          <TextField className="addrField" floatingLabelText="Address" value={this.state.addr} onChange={this.handleChangeAddr} />  
+          <TextField className="portField" floatingLabelText="Port" value={this.state.port} onChange={this.handleChangePort} />
+          <SelectField className="protocolField" value={this.state.protocol}
+            underlineStyle={{'bottom': '6px'}} labelStyle={{'top': '0px'}}>
             <MenuItem value={"FTP"} primaryText="FTP" />
           </SelectField>
           </div>

@@ -14,8 +14,6 @@ import './ConnectToSite.css';
   */
 export default class ConnectToSite extends React.Component {
   state = {
-    finished: false,
-    open: false,
     stepIndex: 0,
   };
 
@@ -23,7 +21,6 @@ export default class ConnectToSite extends React.Component {
     const {stepIndex} = this.state;
     this.setState({
       stepIndex: stepIndex + 1,
-      finished: stepIndex >= 2,
     });
   };
 
@@ -47,26 +44,22 @@ export default class ConnectToSite extends React.Component {
     }
   }
 
-  handleOpen = () => {
-    this.setState({open: true, stepIndex:0});
-  };
-
-  handleClose = () => {
-    this.setState({open: false});
+  handleFinished = () => {
+    this.setState({stepIndex: 0});
+    this.props.onFinish();
   };
 
   render() {
-    const {finished, stepIndex} = this.state;
+    const {stepIndex} = this.state;
     const contentStyle = {margin: '0 16px'};
 
     return (
       <div>
-        <RaisedButton label="Scrollable Dialog" onTouchTap={this.handleOpen} />
       <Dialog
         title="New Site"
         actions={[]}
         modal={true}
-        open={this.state.open}
+        open={this.props.open}
       >
       <div style={{width: '100%', maxWidth: 700, margin: 'auto'}}>
         <Stepper activeStep={stepIndex}>
@@ -81,19 +74,7 @@ export default class ConnectToSite extends React.Component {
       </Step>
       </Stepper>
       <div style={contentStyle}>
-        {finished ? (
-          <p>
-            <a
-              href="#"
-              onClick={(event) => {
-                event.preventDefault();
-                this.setState({stepIndex: 0, finished: false});
-              }}
-            >
-              Click here
-            </a> to reset the example.
-          </p>
-        ) : (
+        {(
           <div>
             <p>{this.getStepContent(stepIndex)}</p>
             <div style={{marginTop: 33, float: 'right'}}>
@@ -106,7 +87,7 @@ export default class ConnectToSite extends React.Component {
             <RaisedButton
               label={stepIndex === 2 ? 'Finish' : 'Next'}
               primary={true}
-              onTouchTap={stepIndex === 2 ? this.handleClose : this.handleNext}
+              onTouchTap={stepIndex === 2 ? this.handleFinished : this.handleNext}
             />
             </div>
           </div>

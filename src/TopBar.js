@@ -9,23 +9,23 @@ export default class TopBar extends React.Component {
   render() {
     return (<AppBar
       title={<span>Free FTP</span>}
-      style={{"-webkit-app-region": "drag"}}
+      style={this.props.draggable ? {"-webkit-app-region": "drag"} : {} }
       iconElementLeft={
         <IconButton
           style={{"-webkit-app-region": "no-drag"}}
-          onClick={this.props.onDrawerToggle}>
+          onTouchTap={this.props.onDrawerToggle}>
           <NavigationChevronRight />
         </IconButton>
       }
       iconElementRight={(<div>
         <IconButton
           style={{"-webkit-app-region": "no-drag"}}
-          onClick={() => window.resizeTo(screen.availWidth, screen.availHeight)}>
+          onTouchTap={() => window.resizeTo(screen.availWidth, screen.availHeight)}>
           <NavigationFullscreen />
         </IconButton>
         <IconButton
           style={{"-webkit-app-region": "no-drag"}}
-          onClick={window.close.bind(window)}>
+          onTouchTap={window.close.bind(window)}>
           <NavigationClose />
         </IconButton></div>
       )}

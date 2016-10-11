@@ -11,8 +11,17 @@ chrome.app.runtime.onLaunched.addListener(function() {
 		commandWindow.focus();
 	} else {
 		chrome.app.window.create('index.html',
-			{id: "mainwin", innerBounds: {width: 800, height: 459, left: 0}},
-			function(w) {
+      {
+        id: "mainwin", 
+        frame: "none",
+        innerBounds: {
+          width: 1280,
+          height: 720,
+          minWidth: 1280,
+          minHeight: 720
+        },
+        resizable: true
+      }, function(w) {
 				commandWindow = w;
 			});
 	}

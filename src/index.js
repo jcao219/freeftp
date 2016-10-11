@@ -1,6 +1,7 @@
 import React from 'react';
 import ReactDOM from 'react-dom';
-import ConnectToSite from './ConnectToSite';
+// import ConnectToSite from './ConnectToSite';
+import App from './App';
 //import FtpClient from './ftp-client';
 import darkBaseTheme from 'material-ui/styles/baseThemes/darkBaseTheme';
 import getMuiTheme from 'material-ui/styles/getMuiTheme';
@@ -33,7 +34,7 @@ document.addEventListener("DOMContentLoaded", function(event) {
 
 ReactDOM.render(
   <MuiThemeProvider muiTheme={getMuiTheme(darkBaseTheme)}>
-    <ConnectToSite />
+    <App />
   </MuiThemeProvider>,
   document.getElementById('root')
 );

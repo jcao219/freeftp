@@ -61,7 +61,7 @@ export default class ConnectToSite extends React.Component {
 
     return (
       <div>
-      <RaisedButton label="Scrollable Dialog" onTouchTap={this.handleOpen} />
+        <RaisedButton label="Scrollable Dialog" onTouchTap={this.handleOpen} />
       <Dialog
         title="New Site"
         actions={[]}

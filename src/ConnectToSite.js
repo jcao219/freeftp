@@ -16,11 +16,8 @@ import './ConnectToSite.css';
 import FtpClient from './ftp-client';
 import LoginDialog from './login-dialog';
 
-/**
-  * From http://www.material-ui.com/#/components/stepper
-  */
-export default class ConnectToSite extends React.Component {
-  state = {
+const initState = function() {
+  return {
     stepIndex: 0,
     addr: "",
     save: true,
@@ -31,7 +28,14 @@ export default class ConnectToSite extends React.Component {
     protocol: "FTP",
     client: null,
     needLogin: false
-  };
+  }
+};
+
+/**
+  * From http://www.material-ui.com/#/components/stepper
+  */
+export default class ConnectToSite extends React.Component {
+  state = initState();
 
   establish() {
     var ftpClient = new FtpClient(this.state.addr, parseInt(this.state.port, 10), 
@@ -46,6 +50,11 @@ export default class ConnectToSite extends React.Component {
     ftpClient.once('logged in', () => this.handleLoginSuccess());
     this.setState({establishing: true, client: ftpClient});
   }
+
+  handleCancelled = () => {
+    this.props.onCancel();
+    this.setState(initState());
+  }
   
   handlePrev = () => {
     const {stepIndex} = this.state;
@@ -56,7 +65,7 @@ export default class ConnectToSite extends React.Component {
         this.setState({establishing: false});
       }
     } else {
-      this.handleFinished(); // Change to handleCancelled
+      this.handleCancelled();
     }
   };
 
@@ -136,6 +145,8 @@ export default class ConnectToSite extends React.Component {
 
   handleLoginSuccess() {
     this.setState({needLogin: false});
+    this.props.onFinish({client: this.state.client,
+      name: this.state.nick});
   }
 
   handleNeedLogin() {

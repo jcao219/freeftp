@@ -8,23 +8,23 @@ import NavigationChevronRight from 'material-ui/svg-icons/navigation/chevron-rig
 export default class TopBar extends React.Component {
   render() {
     return (<AppBar
-      title={<span>No Site Connected</span>}
-      style={this.props.draggable ? {"-webkit-app-region": "drag"} : {} }
+      title={<span>{this.props.title}</span>}
+      style={this.props.draggable ? {WebkitAppRegion: "drag"} : {} }
       iconElementLeft={
         <IconButton
-          style={{"-webkit-app-region": "no-drag"}}
+          style={{WebkitAppRegion: "no-drag"}}
           onTouchTap={this.props.onDrawerToggle}>
           <NavigationChevronRight />
         </IconButton>
       }
       iconElementRight={(<div>
         <IconButton
-          style={{"-webkit-app-region": "no-drag"}}
+          style={{WebkitAppRegion: "no-drag"}}
           onTouchTap={() => window.resizeTo(screen.availWidth, screen.availHeight)}>
           <NavigationFullscreen />
         </IconButton>
         <IconButton
-          style={{"-webkit-app-region": "no-drag"}}
+          style={{WebkitAppRegion: "no-drag"}}
           onTouchTap={window.close.bind(window)}>
           <NavigationClose />
         </IconButton></div>

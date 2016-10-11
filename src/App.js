@@ -7,10 +7,8 @@ import ConnectToSite from './ConnectToSite';
 
 export default class App extends React.Component {
 
-  constructor(props) {
-    super(props);
-    this.state = {open: false, draggable: true, openNewSite: false};
-  }
+  state = {open: false, draggable: true, openNewSite: false,
+    status: "No Site Connected"};
 
   handleToggle() {
     var wasOpen = this.state.open;
@@ -27,13 +25,13 @@ export default class App extends React.Component {
     this.setState({openNewSite: true});
   }
 
-  handleConfirmNewSite() {
-    this.setState({openNewSite: false});
+  handleConfirmNewSite(siteInfo) {
+    this.setState({openNewSite: false, status: siteInfo.name});
   }
 
   render() {
     return (<div>
-      <TopBar draggable={this.state.draggable} onDrawerToggle={this.handleToggle.bind(this)} />
+      <TopBar title={this.state.status} draggable={this.state.draggable} onDrawerToggle={this.handleToggle.bind(this)} />
       <Drawer open={this.state.open} docked={false} 
         onRequestChange={(open) => this.setState({open, draggable: !open})}>
         <MenuItem onTouchTap={this.handleNewSite.bind(this)}>
@@ -41,7 +39,8 @@ export default class App extends React.Component {
         </MenuItem>
         <Divider/>
       </Drawer>
-      <ConnectToSite open={this.state.openNewSite} onFinish={this.handleConfirmNewSite.bind(this)} />
+      <ConnectToSite open={this.state.openNewSite} onFinish={this.handleConfirmNewSite.bind(this)}
+        onCancel={ () => this.setState({openNewSite:false}) } />
       </div>
     )
   }

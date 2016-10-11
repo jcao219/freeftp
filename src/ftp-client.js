@@ -21,7 +21,11 @@ class FtpClient extends EventEmitter {
     var splitted = str.split(' ');
     switch(splitted[0]) {
       case "220": // Ready for login
-        this.commander.sendln("USER " + this.user);
+        if(this.user == null) {
+          this.emitEvent("login pls");
+        } else {
+          this.commander.sendln("USER " + this.user);
+        }
         break;
       case "331": // Need password
         this.commander.sendln("PASS " + this.user);
@@ -42,6 +46,13 @@ class FtpClient extends EventEmitter {
 
   getPwd () {
     this.commander.sendln("PWD");
+  }
+
+  login(user, pass) {
+    this.user = user;
+    this.pass = pass;
+    this.commander.sendln("USER " + this.user);
+    this.commander.sendln("PASS " + this.pass);
   }
 }
 

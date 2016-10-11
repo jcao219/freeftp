@@ -6,3 +6,8 @@
     color: white !important;
     font-weight: bold !important;
 }
+
+.hcenter {
+    margin-left: auto;
+    margin-right: auto;
+}

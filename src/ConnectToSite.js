@@ -10,7 +10,10 @@ import Dialog from 'material-ui/Dialog';
 import TextField from 'material-ui/TextField';
 import SelectField from 'material-ui/SelectField';
 import MenuItem from 'material-ui/MenuItem';
+import Checkbox from 'material-ui/Checkbox';
+import CircularProgress from 'material-ui/CircularProgress';
 import './ConnectToSite.css';
+import FtpClient from './ftp-client';
 
 /**
   * From http://www.material-ui.com/#/components/stepper
@@ -19,14 +22,48 @@ export default class ConnectToSite extends React.Component {
   state = {
     stepIndex: 0,
     addr: "",
+    save: true,
     nick: "",
     nicknameHint: "",
     port: 21,
-    protocol: "FTP"
+    establishing: false,
+    protocol: "FTP",
+    client: null
   };
+
+  establish() {
+    var ftpClient = new FtpClient(this.state.addr, parseInt(this.state.port, 10), 
+      null, null);
+
+    ftpClient.once('dir result', function(pwd) {
+      console.log(pwd);
+      document.getElementById('pwd').innerHTML = pwd;
+    });
+
+    ftpClient.once('login pls', () => this.handleNeedLogin()); // TODO
+    ftpClient.once('logged in', () => this.handleLoginSuccess());
+    this.setState({establishing: true, client: ftpClient});
+  }
+  
+  handlePrev = () => {
+    const {stepIndex} = this.state;
+    if (stepIndex > 0) {
+      this.setState({stepIndex: stepIndex - 1});
+      if (this.state.establishing) {
+        // TODO: cancel the FTP connection attempt
+        this.setState({establishing: false});
+      }
+    } else {
+      this.handleFinished(); // Change to handleCancelled
+    }
+  };
+
 
   handleNext = () => {
     const {stepIndex} = this.state;
+    if (stepIndex === 1) {
+      this.establish();
+    }
     this.setState({
       stepIndex: stepIndex + 1,
     });
@@ -44,6 +81,12 @@ export default class ConnectToSite extends React.Component {
     });
   };
 
+  handleSaveCheck = (event) => {
+    this.setState({
+      save: event.target.checked
+    });
+  };
+
   handleChangeAddr = (event) => {
     this.setState({
       addr: event.target.value,
@@ -51,14 +94,9 @@ export default class ConnectToSite extends React.Component {
     });
   };
 
-  handlePrev = () => {
-    const {stepIndex} = this.state;
-    if (stepIndex > 0) {
-      this.setState({stepIndex: stepIndex - 1});
-    } else {
-      this.handleFinished(); // Change to handleCancelled
-    }
-  };
+  getConfirmationPage() {
+    return (<CircularProgress style={{textAlign: 'center'}} className="hcenter" size={80} thickness={5} />);
+  }
 
   getStepContent(stepIndex) {
     switch (stepIndex) {
@@ -74,10 +112,16 @@ export default class ConnectToSite extends React.Component {
           </div>
         );
       case 1:
-        return <TextField floatingLabelText="Name this connection: " floatingLabelFixed={true}
-          value={this.state.nick} hintText={this.state.nicknameHint} onChange={this.handleChangeNick} />;
+        return (<div>
+          <TextField floatingLabelText="Name this connection: " floatingLabelFixed={true}
+            value={this.state.nick} hintText={this.state.nicknameHint} onChange={this.handleChangeNick} />
+          <Checkbox label="Save Connection" onCheck={this.handleSaveCheck} checked={this.state.save} />
+          </div>
+        );
       case 2:
-        return 'TODO';
+        return (<div style={{textAlign: 'center'}}>
+            {this.getConfirmationPage()}
+           </div>);
       default:
         return 'You\'re a long way from home sonny jim!';
     }
@@ -87,6 +131,15 @@ export default class ConnectToSite extends React.Component {
     this.setState({stepIndex: 0});
     this.props.onFinish();
   };
+
+  handleLoginSuccess() {
+    // TODO
+  }
+
+  handleNeedLogin() {
+    //const {client} = this.state;
+    console.log("Need login!");
+  }
 
   render() {
     const {stepIndex} = this.state;
@@ -125,6 +178,7 @@ export default class ConnectToSite extends React.Component {
             <RaisedButton
               label={stepIndex === 2 ? 'Finish' : 'Next'}
               primary={true}
+              disabled={this.state.establishing}
               onTouchTap={stepIndex === 2 ? this.handleFinished : this.handleNext}
             />
             </div>

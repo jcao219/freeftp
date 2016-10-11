@@ -6,6 +6,7 @@ import {
 } from 'material-ui/Stepper';
 import RaisedButton from 'material-ui/RaisedButton';
 import FlatButton from 'material-ui/FlatButton';
+import Dialog from 'material-ui/Dialog';
 import './ConnectToSite.css';
 
 /**
@@ -14,6 +15,7 @@ import './ConnectToSite.css';
 export default class ConnectToSite extends React.Component {
   state = {
     finished: false,
+    open: false,
     stepIndex: 0,
   };
 
@@ -45,11 +47,27 @@ export default class ConnectToSite extends React.Component {
     }
   }
 
+  handleOpen = () => {
+    this.setState({open: true, stepIndex:0});
+  };
+
+  handleClose = () => {
+    this.setState({open: false});
+  };
+
   render() {
     const {finished, stepIndex} = this.state;
     const contentStyle = {margin: '0 16px'};
 
     return (
+      <div>
+      <RaisedButton label="Scrollable Dialog" onTouchTap={this.handleOpen} />
+      <Dialog
+        title="New Site"
+        actions={[]}
+        modal={true}
+        open={this.state.open}
+      >
       <div style={{width: '100%', maxWidth: 700, margin: 'auto'}}>
         <Stepper activeStep={stepIndex}>
           <Step>
@@ -78,7 +96,7 @@ export default class ConnectToSite extends React.Component {
         ) : (
           <div>
             <p>{this.getStepContent(stepIndex)}</p>
-            <div style={{marginTop: 33}}>
+            <div style={{marginTop: 33, float: 'right'}}>
               <FlatButton
                 label="Back"
                 disabled={stepIndex === 0}
@@ -88,12 +106,14 @@ export default class ConnectToSite extends React.Component {
             <RaisedButton
               label={stepIndex === 2 ? 'Finish' : 'Next'}
               primary={true}
-              onTouchTap={this.handleNext}
+              onTouchTap={stepIndex === 2 ? this.handleClose : this.handleNext}
             />
             </div>
           </div>
         )}
       </div>
+      </div>
+      </Dialog>
       </div>
     );
   }

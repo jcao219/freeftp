@@ -8,7 +8,7 @@ import NavigationChevronRight from 'material-ui/svg-icons/navigation/chevron-rig
 export default class TopBar extends React.Component {
   render() {
     return (<AppBar
-      title={<span>Free FTP</span>}
+      title={<span>No Site Connected</span>}
       style={this.props.draggable ? {"-webkit-app-region": "drag"} : {} }
       iconElementLeft={
         <IconButton

@@ -28,6 +28,8 @@ export default class ConnectToSite extends React.Component {
     const {stepIndex} = this.state;
     if (stepIndex > 0) {
       this.setState({stepIndex: stepIndex - 1});
+    } else {
+      this.handleFinished(); // Change to handleCancelled
     }
   };
 
@@ -79,8 +81,7 @@ export default class ConnectToSite extends React.Component {
             <p>{this.getStepContent(stepIndex)}</p>
             <div style={{marginTop: 33, float: 'right'}}>
               <FlatButton
-                label="Back"
-                disabled={stepIndex === 0}
+                label={stepIndex === 0 ? "Cancel" : "Back"}
                 onTouchTap={this.handlePrev}
                 style={{marginRight: 12}}
               />

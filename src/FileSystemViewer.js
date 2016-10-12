@@ -33,7 +33,8 @@ export default class FileSystemViewer extends React.Component {
     }
     return (
       <div><Table className={this.props.className} multiSelectable={this.state.multi}>
-        <TableHeader displayRowCheckbox={false}>
+        <TableHeader displaySelectAll={false}
+          adjustForCheckbox={false}>
           <TableRow>
             <TableHeaderColumn>Name</TableHeaderColumn>
             <TableHeaderColumn>Size</TableHeaderColumn>

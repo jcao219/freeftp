@@ -1,3 +1,4 @@
+var path = require('path');
 var HtmlWebpackPlugin = require('html-webpack-plugin');
 var CopyWebpackPlugin = require('copy-webpack-plugin');
 var CopyWebpackPluginConfig = new CopyWebpackPlugin([{from: 'public' }], {ignore: ['public/index.html']});
@@ -16,8 +17,8 @@ module.exports = {
   },
   module: {
     loaders: [
-      {test: /\.js$/, include: __dirname + '/src', loader: "babel-loader"},
-      {test: /\.css$/, loaders: ['style', 'css'], include: __dirname + '/src'}
+      {test: /\.js$/, include: path.join(__dirname, 'src'), loader: "babel-loader"},
+      {test: /\.css$/, loaders: ['style', 'css'], include: path.join(__dirname, 'src')}
     ]
   },
   plugins: [HTMLWebpackPluginConfig, CopyWebpackPluginConfig]

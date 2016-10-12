@@ -23,7 +23,7 @@ TcpConnection.prototype.connect = function() {
     tcp.onReceiveError.addListener(that._onError);
     tcp.connect(that.socketId, that.addr, that.port, function(code) {
       if (code < 0) {
-        that._onError({resultCode:code});
+        that._onError({socketId: that.socketId, resultCode:code});
       } else {
         that.connected = true;
         that.emitEvent('connected');
@@ -59,6 +59,8 @@ TcpConnection.prototype._onReceive = function(receiveInfo) {
 };
 
 TcpConnection.prototype._onError = function(info) {
+  if(info.socketId !== this.socketId) // Not mine.
+    return;
   var code = info.resultCode;
   const msg = NetErrorCode[code];
   console.warn("Error code (" + code + "): " + msg);

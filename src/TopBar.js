@@ -26,7 +26,7 @@ export default class TopBar extends React.Component {
         </IconButton>
         <IconButton
           style={{WebkitAppRegion: "no-drag"}}
-          onTouchTap={() => console.log("TODO: Transfers panel.")} 
+          onTouchTap={() => console.log("TODO: Transfers panel.")}>
           <FileCloudQueue />
         </IconButton>
         <IconButton

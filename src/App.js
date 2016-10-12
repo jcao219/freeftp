@@ -8,7 +8,7 @@ import ConnectToSite from './ConnectToSite';
 export default class App extends React.Component {
 
   state = {open: false, draggable: true, openNewSite: false,
-    status: "No Site Connected"};
+    status: "No Site Connected", activeSite: null};
 
   handleToggle() {
     var wasOpen = this.state.open;
@@ -26,7 +26,14 @@ export default class App extends React.Component {
   }
 
   handleConfirmNewSite(siteInfo) {
-    this.setState({openNewSite: false, status: siteInfo.name});
+    this.setState({openNewSite: false, status: siteInfo.name, activeSite: siteInfo.client});
+    if(siteInfo.savePass) {
+      // TODO
+    }
+    this.state.activeSite.once('dir result', (pwd) => {
+      // TODO: make a new component that handles the server.
+    });
+    this.state.activeSite.getPwd();
   }
 
   render() {
@@ -35,7 +42,7 @@ export default class App extends React.Component {
       <Drawer open={this.state.open} docked={false} 
         onRequestChange={(open) => this.setState({open, draggable: !open})}>
         <MenuItem onTouchTap={this.handleNewSite.bind(this)}>
-            New Site
+            Connect to new site
         </MenuItem>
         <Divider/>
       </Drawer>

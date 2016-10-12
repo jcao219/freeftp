@@ -27,7 +27,8 @@ const initState = function() {
     establishing: false,
     protocol: "FTP",
     client: null,
-    needLogin: false
+    needLogin: false,
+    savePassword: false
   }
 };
 
@@ -40,11 +41,6 @@ export default class ConnectToSite extends React.Component {
   establish() {
     var ftpClient = new FtpClient(this.state.addr, parseInt(this.state.port, 10), 
       null, null);
-
-    ftpClient.once('dir result', function(pwd) {
-      console.log(pwd);
-      document.getElementById('pwd').innerHTML = pwd;
-    });
 
     ftpClient.once('login pls', () => this.setState({needLogin: true})); // TODO
     ftpClient.once('logged in', () => this.handleLoginSuccess());
@@ -146,16 +142,19 @@ export default class ConnectToSite extends React.Component {
   handleLoginSuccess() {
     this.setState({needLogin: false});
     this.props.onFinish({client: this.state.client,
-      name: this.state.nick});
+      name: this.state.nick,
+      savePass: this.state.savePassword});
+    this.setState(initState());
   }
 
   handleNeedLogin() {
     this.setState({needLogin: true});
   }
 
-  handleLogin = (user, pass) => {
+  handleLogin = (user, pass, savePassword) => {
     const {client} = this.state;
     client.login(user, pass);
+    this.setState({savePassword})
   }
 
   handleLoginCancel = () => {

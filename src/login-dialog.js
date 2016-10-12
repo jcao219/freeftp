@@ -2,29 +2,36 @@ import React from 'react';
 import FlatButton from 'material-ui/FlatButton';
 import Dialog from 'material-ui/Dialog';
 import TextField from 'material-ui/TextField';
+import Checkbox from 'material-ui/Checkbox';
 
 export default class LoginDialog extends React.Component {
 
-  state = { user: "", pass: "" };
+  state = { user: "", pass: "", save: true};
   
   handleCancel = () => {
     this.props.onCancel();
   };
 
   handleLogin = () => {
-    const {user, pass} = this.state;
-    this.props.onLogin(user, pass);
+    const {user, pass, save} = this.state;
+    this.props.onLogin(user, pass, save);
+    this.resetFields();
   };
 
-  setValue(field, event) {
+  resetFields() {
+    this.setState({user: "", pass: ""});
+  }
+
+  setValue(field, event, val) {
     var object = {};
-    object[field] = event.target.value;
+    object[field] = val;
     this.setState(object);
   }
 
   render() {
     const actions = [
       <FlatButton
+        disabled
         label="Cancel"
         primary={false}
         onTouchTap={this.handleCancel} />,
@@ -50,6 +57,11 @@ export default class LoginDialog extends React.Component {
           value={this.state.pass}
           onChange={this.setValue.bind(this, "pass")}
           type="password"
+        />
+        <Checkbox
+          checked={this.state.save}
+          label="Save password"
+          onCheck={this.setValue.bind(this, "save")}
         />
       </Dialog>
     );

@@ -4,6 +4,7 @@ import Drawer from 'material-ui/Drawer';
 import Divider from 'material-ui/Divider';
 import MenuItem from 'material-ui/MenuItem';
 import ConnectToSite from './ConnectToSite';
+import FileSystemViewer from './FileSystemViewer';
 
 export default class App extends React.Component {
 
@@ -31,7 +32,7 @@ export default class App extends React.Component {
       // TODO
     }
     this.state.activeSite.once('dir result', (pwd) => {
-      // TODO: make a new component that handles the server.
+      // TODO
     });
     this.state.activeSite.getPwd();
   }
@@ -39,7 +40,7 @@ export default class App extends React.Component {
   render() {
     return (<div>
       <TopBar title={this.state.status} draggable={this.state.draggable} onDrawerToggle={this.handleToggle.bind(this)} />
-      <Drawer open={this.state.open} docked={false} 
+      <Drawer open={this.state.open} docked={false}
         onRequestChange={(open) => this.setState({open, draggable: !open})}>
         <MenuItem onTouchTap={this.handleNewSite.bind(this)}>
             Connect to new site

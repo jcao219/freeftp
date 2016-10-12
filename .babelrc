@@ -1,7 +1,7 @@
 {
   "presets": [
     "react",
-	"latest"
+    "latest"
   ],
 
   plugins: ["transform-class-properties"]

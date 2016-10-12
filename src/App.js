@@ -5,11 +5,13 @@ import Divider from 'material-ui/Divider';
 import MenuItem from 'material-ui/MenuItem';
 import ConnectToSite from './ConnectToSite';
 import FileSystemViewer from './FileSystemViewer';
+var update = require("react-addons-update");
+import './App.css';
 
 export default class App extends React.Component {
 
   state = {open: false, draggable: true, openNewSite: false,
-    status: "No Site Connected", activeSite: null};
+    activeSite: null, remoteFS: null};
 
   handleToggle() {
     var wasOpen = this.state.open;
@@ -26,20 +28,41 @@ export default class App extends React.Component {
     this.setState({openNewSite: true});
   }
 
+  handleError = (str) => {
+    console.error(str);
+  }
+
+  handleListDir = (res) => {
+    const {remoteFS} = this.state;
+    res.forEach(item => item.selected = false);
+    const updated = update(remoteFS, {ls: {$set: res}});
+    this.setState({remoteFS: updated});
+  }
+
   handleConfirmNewSite(siteInfo) {
-    this.setState({openNewSite: false, status: siteInfo.name, activeSite: siteInfo.client});
+    this.setState({openNewSite: false,
+      remoteFS: { name: siteInfo.name, ls: [], pwd: ""},
+      activeSite: siteInfo.client});
     if(siteInfo.savePass) {
       // TODO
     }
-    this.state.activeSite.once('dir result', (pwd) => {
-      // TODO
+    const {activeSite, remoteFS} = this.state;
+    remoteFS.name = siteInfo.name;
+    activeSite.on('error', this.handleError);
+    activeSite.once('dir result', (res) => {
+      const {remoteFS} = this.state;
+      const updatedRemoteFS = update(remoteFS, {pwd: {$set: res}});
+      this.setState({remoteFS: updatedRemoteFS});
+      activeSite.on('ls result', this.handleListDir);
+      activeSite.ls();
     });
-    this.state.activeSite.getPwd();
+    activeSite.pwd();
   }
 
   render() {
     return (<div>
-      <TopBar title={this.state.status} draggable={this.state.draggable} onDrawerToggle={this.handleToggle.bind(this)} />
+      <TopBar title={this.state.remoteFS === null ? "No Site Connected" : this.state.remoteFS.name }
+        draggable={this.state.draggable} onDrawerToggle={this.handleToggle.bind(this)} />
       <Drawer open={this.state.open} docked={false}
         onRequestChange={(open) => this.setState({open, draggable: !open})}>
         <MenuItem onTouchTap={this.handleNewSite.bind(this)}>
@@ -49,6 +72,7 @@ export default class App extends React.Component {
       </Drawer>
       <ConnectToSite open={this.state.openNewSite} onFinish={this.handleConfirmNewSite.bind(this)}
         onCancel={ () => this.setState({openNewSite:false}) } />
+      <FileSystemViewer model={this.state.remoteFS} className={this.state.remoteFS === null ? "hideFSV" : "showFSV"}/>
       </div>
     )
   }

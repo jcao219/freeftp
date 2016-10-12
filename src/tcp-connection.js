@@ -4,10 +4,9 @@ import {NetErrorCode} from './net-errors';
 
 var tcp = chrome.sockets.tcp;
 
-function TcpConnection(addr, port, keepAlive) {
+function TcpConnection(addr, port) {
   this.addr = addr;
   this.port = port;
-  this.keepAlive = keepAlive === true;
   this.connected = false;
   this.socketId = null;
   this._onReceive = this._onReceive.bind(this);
@@ -27,12 +26,6 @@ TcpConnection.prototype.connect = function() {
         that._onError({resultCode:code});
       } else {
         that.connected = true;
-        if(that.keepAlive)
-          tcp.setKeepAlive(that.socketId, true, function(result) { 
-            if (chrome.runtime.lastError) {
-              console.warn("Could not set keep-alive: " + chrome.runtime.lastError.message);
-            }
-          });
         that.emitEvent('connected');
       }
     });
@@ -60,8 +53,8 @@ TcpConnection.prototype._onReceive = function(receiveInfo) {
     return;
 
   arrayBufferToString(receiveInfo.data, function(str) {
-    this.emitEvent('recv', [str]);
     log("Recv: " + str);
+    this.emitEvent('recv', [str]);
   }.bind(this));
 };
 
@@ -107,4 +100,3 @@ function log(msg) {
 }
 
 export default TcpConnection;
-

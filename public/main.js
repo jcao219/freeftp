@@ -7,10 +7,10 @@ var commandWindow;
  * @see https://developer.chrome.com/apps/app_window
  */
 chrome.app.runtime.onLaunched.addListener(function() {
-	if (commandWindow && !commandWindow.contentWindow.closed) {
-		commandWindow.focus();
-	} else {
-		chrome.app.window.create('index.html',
+  if (commandWindow && !commandWindow.contentWindow.closed) {
+    commandWindow.focus();
+  } else {
+    chrome.app.window.create('index.html',
       {
         id: "mainwin", 
         frame: "none",
@@ -22,8 +22,8 @@ chrome.app.runtime.onLaunched.addListener(function() {
         },
         resizable: true
       }, function(w) {
-				commandWindow = w;
-			});
-	}
+        commandWindow = w;
+      });
+  }
 });
 

@@ -39,7 +39,7 @@ export default class ConnectToSite extends React.Component {
   state = initState();
 
   establish() {
-    var ftpClient = new FtpClient(this.state.addr, parseInt(this.state.port, 10), 
+    var ftpClient = new FtpClient(this.state.addr, parseInt(this.state.port, 10),
       null, null);
 
     ftpClient.once('login pls', () => this.setState({needLogin: true})); // TODO
@@ -51,7 +51,7 @@ export default class ConnectToSite extends React.Component {
     this.props.onCancel();
     this.setState(initState());
   }
-  
+
   handlePrev = () => {
     const {stepIndex} = this.state;
     if (stepIndex > 0) {
@@ -110,7 +110,7 @@ export default class ConnectToSite extends React.Component {
       case 0:
         return (
           <div>
-          <TextField className="addrField" floatingLabelText="Address" value={this.state.addr} onChange={this.handleChangeAddr} />  
+          <TextField className="addrField" floatingLabelText="Address" value={this.state.addr} onChange={this.handleChangeAddr} />
           <TextField className="portField" floatingLabelText="Port" value={this.state.port} onChange={this.handleChangePort} />
           <SelectField className="protocolField" value={this.state.protocol}
             underlineStyle={{'bottom': '6px'}} labelStyle={{'top': '0px'}}>

@@ -24,7 +24,7 @@ export default class FileSystemViewer extends React.Component {
     var entries;
     if(this.props.model !== null) {
       entries = this.props.model.ls.map((entry, index) =>
-        <TableRow key={index} selected={entry.selected}>
+        <TableRow key={index} onDoubleClick={() => console.log(entry.name)} selected={entry.selected}>
           <TableRowColumn>{entry.name}</TableRowColumn>
           <TableRowColumn>{entry.size}</TableRowColumn>
           <TableRowColumn>{entry.type}</TableRowColumn>

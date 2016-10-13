@@ -34,6 +34,8 @@ class FtpClient extends EventEmitter {
         }
         break;
       case "226": // Transfer Okay
+        this.emitEvent('transfer ok');
+        break;
       case "227": // Pasv Okay
         break;
       case "250":
@@ -88,8 +90,9 @@ class FtpClient extends EventEmitter {
       this.commander.sendln("MLSD");
       console.log("Connecting to " + addr + ":" + port);
       var secondary = new TcpConnection(addr, port);
-      secondary.on("recv", (str) => {
-        const entries = str.split(/(\r?\n)+/);
+      let buffer = "";
+      this.once("transfer ok", () => {
+        const entries = buffer.split(/(\r?\n)+/);
         const results = [];
         for(let entry_ of entries) {
           let entry = entry_.trim();
@@ -116,7 +119,9 @@ class FtpClient extends EventEmitter {
               item.type = m[2].toLowerCase();
             else if (fact == "modify")
               item.date = m[2];
-            else {
+            else if (fact == "perm") {
+
+            } else {
               console.log("Warning: unrecognized MLsD fact " + fact);
             }
             m = regex.exec(entry);
@@ -132,8 +137,10 @@ class FtpClient extends EventEmitter {
           item.name = mname[0].substring(1);
           results.push(item);
         }
-
         this.emitEvent('ls result', [results]);
+      });
+      secondary.on("recv", (str) => {
+        buffer += str;
       });
       secondary.on("error", (str) => this._onError(str));
       secondary.connect();

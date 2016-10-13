@@ -33,9 +33,13 @@ export default class FileSystemViewer extends React.Component {
           <TableRowColumn>{entry.date}</TableRowColumn>
         </TableRow>);
     }
+    // The 59 px below is to adjust for the TableHeader...
     return (
-      <div style={{height: '100vh', overflow: 'auto'}}>
-      <Table className={this.props.className} multiSelectable={this.state.multi}>
+      <div>
+      <Table className={this.props.className}
+       height='calc(100vh - 123px)'
+       fixedHeader={true}
+       multiSelectable={this.state.multi}>
         <TableHeader displaySelectAll={false}
           adjustForCheckbox={false}>
           <TableRow>

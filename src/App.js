@@ -88,11 +88,12 @@ export default class App extends React.Component {
       </Drawer>
       <ConnectToSite open={this.state.openNewSite} onFinish={this.handleConfirmNewSite.bind(this)}
         onCancel={ () => this.setState({openNewSite:false}) } />
-      <FileSystemViewer
-        model={this.state.remoteFS}
-        className={this.state.remoteFS === null ? "hideFSV" : "showFSV"}
+      <div id="actualBody" style={{height: '100%'}}>
+        <FileSystemViewer model={this.state.remoteFS}
+          className={this.state.remoteFS === null ? "hideFSV" : "showFSV"}
           onNavInto={this.handleNavInto}
-      />
+        />
+      </div>
       </div>
     )
   }

@@ -24,7 +24,9 @@ export default class FileSystemViewer extends React.Component {
     var entries;
     if(this.props.model !== null) {
       entries = this.props.model.ls.map((entry, index) =>
-        <TableRow key={index} onDoubleClick={() => console.log(entry.name)} selected={entry.selected}>
+        <TableRow key={index} onDoubleClick={() =>
+          this.props.onNavInto(entry.name, entry.type)}
+          selected={entry.selected}>
           <TableRowColumn>{entry.name}</TableRowColumn>
           <TableRowColumn>{entry.size}</TableRowColumn>
           <TableRowColumn>{entry.type}</TableRowColumn>
@@ -32,7 +34,8 @@ export default class FileSystemViewer extends React.Component {
         </TableRow>);
     }
     return (
-      <div><Table className={this.props.className} multiSelectable={this.state.multi}>
+      <div style={{height: '100vh', overflow: 'auto'}}>
+      <Table className={this.props.className} multiSelectable={this.state.multi}>
         <TableHeader displaySelectAll={false}
           adjustForCheckbox={false}>
           <TableRow>

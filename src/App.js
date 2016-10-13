@@ -59,6 +59,22 @@ export default class App extends React.Component {
     activeSite.pwd();
   }
 
+  handleNavInto = (name, type) => {
+    if(type == "dir") {
+      this.state.activeSite.on('cwd success', () => {
+        const {remoteFS} = this.state;
+        let new_wd = remoteFS.pwd.replace(/\/$/, ""); // Strip trailing '/'
+        new_wd += '/' + name;
+        const updatedRemoteFS = update(remoteFS, {pwd: {$set: new_wd}});
+        this.setState({remoteFS: updatedRemoteFS});
+        this.state.activeSite.ls();
+      });
+      this.state.activeSite.cwd(name);
+    } else {
+      // TODO: Download into directory?
+    }
+  }
+
   render() {
     return (<div>
       <TopBar title={this.state.remoteFS === null ? "No Site Connected" : this.state.remoteFS.name }
@@ -72,7 +88,11 @@ export default class App extends React.Component {
       </Drawer>
       <ConnectToSite open={this.state.openNewSite} onFinish={this.handleConfirmNewSite.bind(this)}
         onCancel={ () => this.setState({openNewSite:false}) } />
-      <FileSystemViewer model={this.state.remoteFS} className={this.state.remoteFS === null ? "hideFSV" : "showFSV"}/>
+      <FileSystemViewer
+        model={this.state.remoteFS}
+        className={this.state.remoteFS === null ? "hideFSV" : "showFSV"}
+          onNavInto={this.handleNavInto}
+      />
       </div>
     )
   }

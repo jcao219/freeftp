@@ -33,6 +33,12 @@ class FtpClient extends EventEmitter {
           this.commander.sendln("USER " + this.user);
         }
         break;
+      case "226": // Transfer Okay
+      case "227": // Pasv Okay
+        break;
+      case "250":
+        this.emitEvent("cwd success")
+        break;
       case "331": // Need password
         if(this.pass != null)
           this.commander.sendln("PASS " + this.user);
@@ -53,6 +59,10 @@ class FtpClient extends EventEmitter {
 
   pwd() {
     this.commander.sendln("PWD");
+  }
+
+  cwd(arg) {
+    this.commander.sendln("CWD " + arg)
   }
 
   ls () {
@@ -103,9 +113,12 @@ class FtpClient extends EventEmitter {
             if (fact == "size")
               item.size = m[2];
             else if (fact == "type")
-              item.type = m[2];
+              item.type = m[2].toLowerCase();
             else if (fact == "modify")
               item.date = m[2];
+            else {
+              console.log("Warning: unrecognized MLsD fact " + fact);
+            }
             m = regex.exec(entry);
           }
           // Now grab the file/dir name

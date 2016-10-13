@@ -6,7 +6,6 @@ import MenuItem from 'material-ui/MenuItem';
 import ConnectToSite from './ConnectToSite';
 import FileSystemViewer from './FileSystemViewer';
 var update = require("react-addons-update");
-import './App.css';
 
 export default class App extends React.Component {
 
@@ -90,7 +89,6 @@ export default class App extends React.Component {
         onCancel={ () => this.setState({openNewSite:false}) } />
       <div id="actualBody" style={{height: '100%'}}>
         <FileSystemViewer model={this.state.remoteFS}
-          className={this.state.remoteFS === null ? "hideFSV" : "showFSV"}
           onNavInto={this.handleNavInto}
         />
       </div>

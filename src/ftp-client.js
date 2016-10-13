@@ -23,7 +23,7 @@ class FtpClient extends EventEmitter {
 
   _onReceive(str) {
     var splitted = str.split(' ');
-    switch(splitted[0]) {
+    switch(splitted[0].substring(0, 3)) {
       case "150": // Opening data channel for directory list.
         break;
       case "220": // Ready for login

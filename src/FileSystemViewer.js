@@ -1,58 +1,56 @@
 import React from 'react';
 import {Table, TableBody, TableHeader, TableHeaderColumn, TableRow, TableRowColumn} from 'material-ui/Table';
+import {List, ListItem} from 'material-ui/List';
+import ActionInfo from 'material-ui/svg-icons/action/info';
+import Divider from 'material-ui/Divider';
+import Subheader from 'material-ui/Subheader';
+import Avatar from 'material-ui/Avatar';
+import FileFolder from 'material-ui/svg-icons/file/folder';
+import ActionAssignment from 'material-ui/svg-icons/action/assignment';
+import {blue500}  from 'material-ui/styles/colors';
 
 export default class FileSystemViewer extends React.Component {
-
-  state = {multi: false};
-
-  constructor(props) {
-    super(props);
-    document.addEventListener('keydown', (evt) => {
-      if ((evt.keyCode === 16 || evt.keyCode === 17) && !this.state.multi) { // SHIFT
-        this.setState({multi: true});
-      }
-    });
-
-    document.addEventListener('keyup', (evt) => {
-      if ((evt.keyCode === 16 || evt.keyCode === 17) && this.state.multi) { // SHIFT
-        this.setState({multi: false});
-      }
-    });
-  }
-
   render() {
-    var entries;
+    var files, folders;
     if(this.props.model !== null) {
-      entries = this.props.model.ls.map((entry, index) =>
-        <TableRow key={index} onDoubleClick={() =>
-          this.props.onNavInto(entry.name, entry.type)}
-          selected={entry.selected}>
-          <TableRowColumn>{entry.name}</TableRowColumn>
-          <TableRowColumn>{entry.size}</TableRowColumn>
-          <TableRowColumn>{entry.type}</TableRowColumn>
-          <TableRowColumn>{entry.date}</TableRowColumn>
-        </TableRow>);
+      folders = this.props.model.ls
+        .filter((entry) => entry.type == "dir")
+        .map((entry, index) =>
+          <ListItem
+            key={index}
+            onDoubleClick={() => this.props.onNavInto(entry.name, entry.type)}
+            leftAvatar={<Avatar icon={<FileFolder />} />}
+            rightIcon={<ActionInfo />}
+            primaryText={entry.name}
+            secondaryText={entry.date}
+          />);
+      files = this.props.model.ls
+        .filter((entry) => entry.type == "file")
+        .map((entry, index) =>
+          <ListItem
+            key={index}
+            onDoubleClick={() => this.props.onNavInto(entry.name, entry.type)}
+            leftAvatar={<Avatar icon={<ActionAssignment />} backgroundColor={blue500} />}
+            rightIcon={<ActionInfo />}
+            primaryText={entry.name}
+            secondaryText={entry.date}
+          />);
+    } else {
+      return (<div />)
     }
-    // The 59 px below is to adjust for the TableHeader...
+    // Ugly hack...
+    // The 59 px below is to adjust for the top element...
     return (
-      <div>
-      <Table className={this.props.className}
-       height='calc(100vh - 123px)'
-       fixedHeader={true}
-       multiSelectable={this.state.multi}>
-        <TableHeader displaySelectAll={false}
-          adjustForCheckbox={false}>
-          <TableRow>
-            <TableHeaderColumn>Name</TableHeaderColumn>
-            <TableHeaderColumn>Size</TableHeaderColumn>
-            <TableHeaderColumn>Type</TableHeaderColumn>
-            <TableHeaderColumn>Date</TableHeaderColumn>
-          </TableRow>
-        </TableHeader>
-        <TableBody displayRowCheckbox={false}>
-          {entries}
-        </TableBody>
-      </Table></div>
+      <div style={{height: 'calc(100vh - 59px)', overflow:'auto'}}>
+      <List>
+      <Subheader inset={true}>{this.props.model.pwd}</Subheader>
+        {folders}
+      </List>
+      <Divider inset={true} />
+      <List>
+        {files}
+      </List>
+      </div>
     );
   }
 }

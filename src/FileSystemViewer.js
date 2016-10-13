@@ -3,10 +3,12 @@ import {Table, TableBody, TableHeader, TableHeaderColumn, TableRow, TableRowColu
 import {List, ListItem} from 'material-ui/List';
 import ActionInfo from 'material-ui/svg-icons/action/info';
 import Divider from 'material-ui/Divider';
-import Subheader from 'material-ui/Subheader';
+import IconButton from 'material-ui/IconButton'
+import FlatButton from 'material-ui/FlatButton'
 import Avatar from 'material-ui/Avatar';
 import FileFolder from 'material-ui/svg-icons/file/folder';
 import ActionAssignment from 'material-ui/svg-icons/action/assignment';
+import NavigationRefresh from 'material-ui/svg-icons/navigation/refresh';
 import {blue500}  from 'material-ui/styles/colors';
 
 export default class FileSystemViewer extends React.Component {
@@ -28,7 +30,7 @@ export default class FileSystemViewer extends React.Component {
         .filter((entry) => entry.type == "file")
         .map((entry, index) =>
           <ListItem
-            key={index}
+            key={folders.length + index}
             onDoubleClick={() => this.props.onNavInto(entry.name, entry.type)}
             leftAvatar={<Avatar icon={<ActionAssignment />} backgroundColor={blue500} />}
             rightIcon={<ActionInfo />}
@@ -41,16 +43,16 @@ export default class FileSystemViewer extends React.Component {
     // Ugly hack...
     // The 59 px below is to adjust for the top element...
     return (
-      <div style={{height: 'calc(100vh - 59px)', overflow:'auto'}}>
-      <List>
-      <Subheader inset={true}>{this.props.model.pwd}</Subheader>
+      <List style={{height: 'calc(100vh - 59px)', overflow:'auto'}}>
+        <IconButton
+          style={{marginLeft: '12px'}}
+          onTouchTap={() => console.log("TODO")}>
+          <NavigationRefresh />
+        </IconButton>
         {folders}
-      </List>
       <Divider inset={true} />
-      <List>
         {files}
       </List>
-      </div>
     );
   }
 }

@@ -40,17 +40,19 @@ export default class FileSystemViewer extends React.Component {
     } else {
       return (<div />)
     }
+
+    if ( folders && folders.length )
+      folders.push(<Divider inset={true} />);
     // Ugly hack...
-    // The 59 px below is to adjust for the top element...
+    // The 70 px below is to adjust for the top element...
     return (
-      <List style={{height: 'calc(100vh - 59px)', overflow:'auto'}}>
+      <List style={{height: 'calc(100vh - 70px)', overflow:'auto'}}>
         <IconButton
           style={{marginLeft: '12px'}}
           onTouchTap={() => console.log("TODO")}>
           <NavigationRefresh />
         </IconButton>
         {folders}
-      <Divider inset={true} />
         {files}
       </List>
     );

@@ -12,13 +12,13 @@ chrome.app.runtime.onLaunched.addListener(function() {
   } else {
     chrome.app.window.create('index.html',
       {
-        id: "mainwin", 
+        id: "mainwin",
         frame: "none",
         innerBounds: {
-          width: 1280,
-          height: 720,
-          minWidth: 1280,
-          minHeight: 720
+          width: 1024,
+          height: 768,
+          minWidth: 640,
+          minHeight: 480
         },
         resizable: true
       }, function(w) {
@@ -26,4 +26,3 @@ chrome.app.runtime.onLaunched.addListener(function() {
       });
   }
 });
-

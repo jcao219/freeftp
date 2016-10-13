@@ -22,7 +22,7 @@ export default class FileSystemViewer extends React.Component {
             key={index}
             onDoubleClick={() => this.props.onNavInto(entry.name, entry.type)}
             leftAvatar={<Avatar icon={<FileFolder />} />}
-            rightIcon={<ActionInfo />}
+            rightIconButton={<IconButton><ActionInfo /></IconButton>}
             primaryText={entry.name}
             secondaryText={entry.date}
           />);
@@ -33,7 +33,7 @@ export default class FileSystemViewer extends React.Component {
             key={folders.length + index}
             onDoubleClick={() => this.props.onNavInto(entry.name, entry.type)}
             leftAvatar={<Avatar icon={<ActionAssignment />} backgroundColor={blue500} />}
-            rightIcon={<ActionInfo />}
+            rightIconButton={<IconButton><ActionInfo /></IconButton>}
             primaryText={entry.name}
             secondaryText={entry.date}
           />);

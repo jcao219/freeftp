@@ -56,19 +56,21 @@ export default class App extends React.Component {
       activeSite.ls();
     });
     activeSite.pwd();
-    // Handle CWD.
-    this.state.activeSite.on('cwd success', () => {
-      const {remoteFS} = this.state;
-      let new_wd = remoteFS.pwd.replace(/\/$/, ""); // Strip trailing '/'
-      new_wd += '/' + name;
-      const updatedRemoteFS = update(remoteFS, {pwd: {$set: new_wd}});
-      this.setState({remoteFS: updatedRemoteFS});
-      this.state.activeSite.ls();
-    });
   }
 
   handleNavInto = (name, type) => {
     if(type == "dir") {
+      // Handle CWD, which we will soon send.
+      this.state.activeSite.once('cwd success', () => {
+        const {remoteFS} = this.state;
+        let new_wd = remoteFS.pwd.replace(/\/$/, ""); // Strip trailing '/'
+        new_wd += '/' + name;
+        const updatedRemoteFS = update(remoteFS, {pwd: {$set: new_wd}});
+        this.setState({remoteFS: updatedRemoteFS});
+        this.state.activeSite.ls();
+      });
+
+      // Finally give the command to change working dir.
       this.state.activeSite.cwd(name);
     } else {
       // TODO: Download into directory?

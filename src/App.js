@@ -12,6 +12,8 @@ export default class App extends React.Component {
   state = {open: false, draggable: true, openNewSite: false,
     activeSite: null, remoteFS: null};
 
+  lastCwd = {dest: null, time: Date.now()};
+
   handleToggle() {
     var wasOpen = this.state.open;
     this.setState({open: !wasOpen,
@@ -60,6 +62,10 @@ export default class App extends React.Component {
 
   handleNavInto = (name, type) => {
     if(type == "dir") {
+      if(this.lastCwd.dest == name && (Date.now() - this.lastCwd.time) < 1500)
+          return;
+      this.lastCwd.dest = name;
+      this.lastCwd.time = Date.now();
       // Handle CWD, which we will soon send.
       this.state.activeSite.once('cwd success', () => {
         const {remoteFS} = this.state;

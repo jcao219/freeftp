@@ -53,8 +53,8 @@ export default class FileSystemViewer extends React.Component {
         (dirstr, i) => <Chip
           key={i}
           data-path={curDirStr += dirstr}
+          onDoubleClick={() => {}}
           onTouchTap={e => this.props.onNavInto(e.target.parentNode.dataset.path, "dir") }
-          backgroundColor='rgb(51,51,51)'
           style={{height: '30%', top: '9px', position: 'relative',
                   marginLeft: '3px', marginRight: '3px'}}
           className="hoverHighlight"

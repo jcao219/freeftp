@@ -11,6 +11,7 @@ import ActionAssignment from 'material-ui/svg-icons/action/assignment';
 import NavigationRefresh from 'material-ui/svg-icons/navigation/refresh';
 import Chip from 'material-ui/Chip';
 import {blue500}  from 'material-ui/styles/colors';
+import './FileSystemViewer.css'
 
 // Path must be to a directory, not to a file
 let pathSplit = function(path) {
@@ -47,10 +48,16 @@ export default class FileSystemViewer extends React.Component {
             primaryText={entry.name}
             secondaryText={entry.date}
           />);
+      let curDirStr = "";
       pathButtons = pathSplit(this.props.model.pwd).map(
         (dirstr, i) => <Chip
+          key={i}
+          data-path={curDirStr += dirstr}
+          onTouchTap={e => console.log(e.target.parentNode.dataset.path) }
           backgroundColor='rgb(51,51,51)'
-          style={{height: '30%', top: '9px', position: 'relative'}}
+          style={{height: '30%', top: '9px', position: 'relative',
+                  marginLeft: '3px', marginRight: '3px'}}
+          className="hoverHighlight"
           >{dirstr}</Chip>);
     } else {
       return (<div />)

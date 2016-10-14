@@ -63,8 +63,15 @@ export default class App extends React.Component {
       // Handle CWD, which we will soon send.
       this.state.activeSite.once('cwd success', () => {
         const {remoteFS} = this.state;
-        let new_wd = remoteFS.pwd.replace(/\/$/, ""); // Strip trailing '/'
-        new_wd += '/' + name;
+        let new_wd;
+        if(name[0] != '/') {
+          // Relative to our current directory
+          new_wd = remoteFS.pwd.replace(/\/$/, ""); // Strip trailing '/'
+          new_wd += '/' + name;
+        } else {
+          // This is an absolute path
+          new_wd = name;
+        }
         const updatedRemoteFS = update(remoteFS, {pwd: {$set: new_wd}});
         this.setState({remoteFS: updatedRemoteFS});
         this.state.activeSite.ls();

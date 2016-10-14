@@ -53,7 +53,7 @@ export default class FileSystemViewer extends React.Component {
         (dirstr, i) => <Chip
           key={i}
           data-path={curDirStr += dirstr}
-          onTouchTap={e => console.log(e.target.parentNode.dataset.path) }
+          onTouchTap={e => this.props.onNavInto(e.target.parentNode.dataset.path, "dir") }
           backgroundColor='rgb(51,51,51)'
           style={{height: '30%', top: '9px', position: 'relative',
                   marginLeft: '3px', marginRight: '3px'}}

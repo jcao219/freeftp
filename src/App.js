@@ -86,7 +86,19 @@ export default class App extends React.Component {
       // Finally give the command to change working dir.
       this.state.activeSite.cwd(name);
     } else {
-      // TODO: Download into directory?
+      if(this.lastCwd.dest == name && (Date.now() - this.lastCwd.time) < 1500)
+          return;
+      this.lastCwd.dest = name;
+      this.lastCwd.time = Date.now();
+
+      let new_wd = this.state.remoteFS.pwd.replace(/\/$/, ""); // Strip trailing '/'
+      new_wd += '/' + name;
+      let url = "ftp://" + this.state.activeSite.user + ":";
+      url += this.state.activeSite.pass + "@";
+      url += this.state.activeSite.addr + new_wd;
+      let anchor = document.getElementById("dlanchor");
+      anchor.href = encodeURI(url);
+      anchor.click();
     }
   }
 
@@ -104,6 +116,7 @@ export default class App extends React.Component {
       <ConnectToSite open={this.state.openNewSite} onFinish={this.handleConfirmNewSite.bind(this)}
         onCancel={ () => this.setState({openNewSite:false}) } />
       <div id="actualBody" style={{height: '100%'}}>
+        <a href="" style={{display: "none"}} id="dlanchor" download target="_blank">only_for_downloads</a>
         <FileSystemViewer model={this.state.remoteFS}
           onNavInto={this.handleNavInto}
         />

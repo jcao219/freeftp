@@ -91,54 +91,7 @@ class FtpClient extends EventEmitter {
       console.log("Connecting to " + addr + ":" + port);
       var secondary = new TcpConnection(addr, port);
       let buffer = "";
-      this.once("transfer ok", () => {
-        const entries = buffer.split(/(\r?\n)+/);
-        const results = [];
-        for(let entry_ of entries) {
-          let entry = entry_.trim();
-          if(!entry) {
-            continue; // Try this.
-          }
-          let item = {}; // The item we will store it into.
-          // First grab the facts of the file/dir entry
-          const regex = /(?:(\w+)=([^;]+);)/g;
-          let m = regex.exec(entry);
-          if(m === null) {
-            this.emitEvent('error', ["Bad MLSD entry line"]);
-            return;
-          }
-          while (m !== null) {
-            // This is necessary to avoid infinite loops with zero-width matches
-            if (m.index === regex.lastIndex)
-              regex.lastIndex++;
-            // The result can be accessed through the `m`-variable.
-            var fact = m[1].toLowerCase();
-            if (fact == "size")
-              item.size = m[2];
-            else if (fact == "type")
-              item.type = m[2].toLowerCase();
-            else if (fact == "modify")
-              item.date = m[2];
-            else if (fact == "perm") {
-
-            } else {
-              console.log("Warning: unrecognized MLsD fact " + fact);
-            }
-            m = regex.exec(entry);
-          }
-          // Now grab the file/dir name
-          const regexname = / .+$/;
-          let mname = regexname.exec(entry);
-          if(mname === null) {
-            this.emitEvent('error', ["Bad MLSD entry line"]);
-            console.log(entry);
-            return;
-          }
-          item.name = mname[0].substring(1);
-          results.push(item);
-        }
-        this.emitEvent('ls result', [results]);
-      });
+      this.once("transfer ok", () => this._handleMLsD(buffer));
       secondary.on("recv", (str) => {
         buffer += str;
       });
@@ -147,6 +100,55 @@ class FtpClient extends EventEmitter {
       return true;
     });
     this.commander.sendln("PASV");
+  }
+
+  _handleMLsD = buffer => {
+    const entries = buffer.split(/(\r?\n)+/);
+    const results = [];
+    for(let entry_ of entries) {
+      let entry = entry_.trim();
+      if(!entry) {
+        continue; // Try this.
+      }
+      let item = {}; // The item we will store it into.
+      // First grab the facts of the file/dir entry
+      const regex = /(?:(\w+)=([^;]+);)/g;
+      let m = regex.exec(entry);
+      if(m === null) {
+        this.emitEvent('error', ["Bad MLSD entry line"]);
+        return;
+      }
+      while (m !== null) {
+        // This is necessary to avoid infinite loops with zero-width matches
+        if (m.index === regex.lastIndex)
+          regex.lastIndex++;
+        // The result can be accessed through the `m`-variable.
+        var fact = m[1].toLowerCase();
+        if (fact == "size")
+          item.size = m[2];
+        else if (fact == "type")
+          item.type = m[2].toLowerCase();
+        else if (fact == "modify")
+          item.date = m[2];
+        else if (fact == "perm") {
+
+        } else {
+          console.log("Warning: unrecognized MLsD fact " + fact);
+        }
+        m = regex.exec(entry);
+      }
+      // Now grab the file/dir name
+      const regexname = / .+$/;
+      let mname = regexname.exec(entry);
+      if(mname === null) {
+        this.emitEvent('error', ["Bad MLSD entry line"]);
+        console.log(entry);
+        return;
+      }
+      item.name = mname[0].substring(1);
+      results.push(item);
+    }
+    this.emitEvent('ls result', [results]);
   }
 
   login(user, pass) {
